@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartPIM</title>
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="brand-mark">S</div>
+          <div>
+            <div class="brand-name">SmartPIM</div>
+            <small>Product Intelligence</small>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <button class="nav-item active" data-view="dashboard-view">
+            <span>◫</span>
+            <span>Dashboard</span>
+          </button>
+          <button class="nav-item" data-view="catalog-view">
+            <span>▣</span>
+            <span>Product Catalogue</span>
+          </button>
+          <button class="nav-item" data-view="attributes-view">
+            <span>◌</span>
+            <span>Attribute Manager</span>
+          </button>
+          <button class="nav-item" data-view="assistant-view">
+            <span>✦</span>
+            <span>AI Product Assistant</span>
+          </button>
+          <button class="nav-item" data-view="sync-view">
+            <span>⇄</span>
+            <span>Data Synchronization</span>
+          </button>
+          <button class="nav-item" data-view="settings-view">
+            <span>⚙</span>
+            <span>Integration Settings</span>
+          </button>
+          <button class="nav-item" data-view="logs-view">
+            <span>☰</span>
+            <span>Activity Logs</span>
+          </button>
+        </nav>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Operations centre</p>
+            <h1>SmartPIM Control Panel</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="secondary-btn" id="theme-toggle">Overview</button>
+            <button class="primary-btn" id="add-product-btn">+ Add Product</button>
+          </div>
+        </header>
+
+        <section id="dashboard-view" class="view active">
+          <div class="summary-grid" id="summary-grid"></div>
+
+          <div class="content-grid dashboard-grid">
+            <div class="card span-2">
+              <div class="card-head">
+                <h3>Product completeness</h3>
+                <span class="chip subtle">Live</span>
+              </div>
+              <div class="chart-box">
+                <div class="bar-chart" id="completeness-chart"></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h3>Sync activity</h3>
+                <span class="chip success">Updated</span>
+              </div>
+              <div class="timeline" id="sync-timeline"></div>
+            </div>
+
+            <div class="card span-2">
+              <div class="card-head">
+                <h3>Recently updated</h3>
+                <button class="text-btn" id="dashboard-view-all">View all</button>
+              </div>
+              <div class="list-table" id="recent-products"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h3>Warnings</h3>
+              </div>
+              <div class="warning-list" id="warning-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="catalog-view" class="view">
+          <div class="section-bar">
+            <div>
+              <p class="eyebrow">Catalogue</p>
+              <h2>Product Catalogue</h2>
+            </div>
+            <div class="toolbar-actions">
+              <button class="secondary-btn" id="catalog-grid-btn">Grid View</button>
+              <button class="primary-btn" id="catalog-add-btn">+ Add Product</button>
+            </div>
+          </div>
+
+          <div class="filter-row">
+            <input id="catalog-search" type="search" placeholder="Search product name or SKU" />
+            <select id="catalog-category-filter">
+              <option value="all">All categories</option>
+            </select>
+            <select id="catalog-status-filter">
+              <option value="all">All statuses</option>
+              <option value="Draft">Draft</option>
+              <option value="Ready to Publish">Ready to Publish</option>
+              <option value="Published">Published</option>
+            </select>
+            <select id="catalog-completeness-filter">
+              <option value="all">All completeness</option>
+              <option value="90">90%+</option>
+              <option value="75">75%+</option>
+              <option value="60">60%+</option>
+            </select>
+            <select id="catalog-sort">
+              <option value="updated-desc">Sort: newest</option>
+              <option value="name-asc">Name A-Z</option>
+              <option value="price-desc">Price high-low</option>
+              <option value="price-asc">Price low-high</option>
+            </select>
+          </div>
+
+          <div class="table-shell" id="catalog-shell">
+            <table class="product-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th>Completeness</th>
+                  <th>Sync</th>
+                  <th>Updated</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="catalog-table-body"></tbody>
+            </table>
+          </div>
+
+          <div id="catalog-grid" class="product-grid hidden"></div>
+        </section>
+
+        <section id="attributes-view" class="view">
+          <div class="section-bar">
+            <div>
+              <p class="eyebrow">Validation</p>
+              <h2>Attribute Manager</h2>
+            </div>
+          </div>
+
+          <div class="form-grid two-column">
+            <div class="card">
+              <div class="card-head">
+                <h3>Create custom attribute</h3>
+              </div>
+              <form id="attribute-form" class="stack-form">
+                <label>
+                  Attribute name
+                  <input type="text" name="name" required placeholder="e.g. Storage Capacity" />
+                </label>
+                <label>
+                  Category
+                  <select name="category" id="attribute-category-select" required></select>
+                </label>
+                <label>
+                  Values (comma separated)
+                  <input type="text" name="values" placeholder="128GB, 256GB, 512GB" />
+                </label>
+                <label class="checkbox-row">
+                  <input type="checkbox" name="required" />
+                  Required for category
+                </label>
+                <button type="submit" class="primary-btn">Save Attribute</button>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h3>Required attributes by category</h3>
+              </div>
+              <div id="attribute-summary" class="summary-list"></div>
+            </div>
+          </div>
+
+          <div class="card table-card">
+            <div class="card-head">
+              <h3>Attribute library</h3>
+            </div>
+            <table class="generic-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Values</th>
+                  <th>Required</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="attribute-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="assistant-view" class="view">
+          <div class="section-bar">
+            <div>
+              <p class="eyebrow">AI tools</p>
+              <h2>AI Product Assistant</h2>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <h3>Generate product copy</h3>
+            </div>
+            <div class="ai-layout">
+              <div class="stack-form">
+                <label>
+                  Product
+                  <select id="ai-product-select"></select>
+                </label>
+                <label>
+                  Tone
+                  <select id="ai-tone-select">
+                    <option>Professional</option>
+                    <option>Friendly</option>
+                    <option>Premium</option>
+                    <option>SEO-Friendly</option>
+                  </select>
+                </label>
+                <button class="primary-btn" id="generate-description-btn">Generate Description</button>
+                <button class="secondary-btn" id="save-description-btn" type="button">Save Description to Product</button>
+              </div>
+              <div class="ai-output-box">
+                <div class="ai-output-header">
+                  <strong>Description preview</strong>
+                  <button class="secondary-btn" id="copy-description-btn">Copy</button>
+                </div>
+                <div id="ai-description-output" class="description-output" contenteditable="true" role="textbox" aria-label="Editable generated product description">
+                  Select a product and generate a polished product description.
+                </div>
+                <small id="ai-status" role="status" aria-live="polite">AI mode is determined by server configuration.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="content-grid two-col-ai">
+            <div class="card">
+              <div class="card-head">
+                <h3>Missing attribute suggestions</h3>
+                <button class="secondary-btn" id="suggest-attributes-btn" type="button">Suggest from product facts</button>
+              </div>
+              <ul id="ai-suggestions" class="checklist"></ul>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h3>Product quality checker</h3>
+              </div>
+              <ul id="quality-checks" class="checklist"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="sync-view" class="view">
+          <div class="section-bar">
+            <div>
+              <p class="eyebrow">Operations</p>
+              <h2>Data Synchronization</h2>
+            </div>
+            <div class="toolbar-actions">
+              <label class="sync-selector-label">
+                Products to synchronize
+                <select id="sync-product-select" class="sync-product-select" multiple size="3"></select>
+              </label>
+              <button class="secondary-btn" id="retry-sync-btn">Retry Failed Sync</button>
+              <button class="primary-btn" id="sync-selected-btn">Sync Selected Products</button>
+            </div>
+          </div>
+          <p id="sync-status-message" role="status" aria-live="polite"></p>
+
+          <div class="summary-grid small-grid" id="sync-summary-grid"></div>
+
+          <div class="content-grid dashboard-grid">
+            <div class="card span-2">
+              <div class="card-head">
+                <h3>Field mapping preview</h3>
+              </div>
+              <div class="mapping-list" id="field-mapping-list"></div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h3>Sync progress</h3>
+              </div>
+              <div class="progress-wrap">
+                <div class="progress-bar" id="sync-progress-bar"></div>
+              </div>
+              <div class="progress-meta">
+                <span id="sync-progress-label">0% complete</span>
+              </div>
+            </div>
+
+            <div class="card span-2">
+              <div class="card-head">
+                <h3>Activity log</h3>
+              </div>
+              <div id="sync-log-list" class="sync-log-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="settings-view" class="view">
+          <div class="section-bar">
+            <div>
+              <p class="eyebrow">Integration</p>
+              <h2>WooCommerce Settings</h2>
+            </div>
+          </div>
+
+          <div class="card settings-card">
+            <div class="stack-form settings-form">
+              <p>WooCommerce credentials are configured on the server. API keys are never entered into or stored in the browser.</p>
+              <p id="woocommerce-status" role="status" aria-live="polite">Checking server configuration…</p>
+              <div class="settings-actions">
+                <button class="secondary-btn" id="test-connection-btn">Test Connection</button>
+                <button class="secondary-btn" id="import-products-btn">Import Products</button>
+                <button class="primary-btn" id="save-settings-btn" type="button">Refresh Status</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="logs-view" class="view">
+          <div class="section-bar">
+            <div>
+              <p class="eyebrow">Audit trail</p>
+              <h2>Activity Logs</h2>
+            </div>
+          </div>
+
+          <div class="card">
+            <div id="activity-log-list" class="log-list"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="product-modal" class="modal hidden">
+      <div class="modal-card">
+        <div class="card-head modal-header">
+          <h3 id="modal-title">Add Product</h3>
+          <button type="button" class="close-btn" data-close-modal="true">✕</button>
+        </div>
+        <form id="product-form" class="stack-form modal-form">
+          <div class="modal-form-scroll">
+            <div class="form-grid two-column">
+              <label>
+                Product name
+                <input type="text" name="name" required />
+              </label>
+              <label>
+                SKU
+                <input type="text" name="sku" required />
+              </label>
+              <label>
+                Category
+                <select name="category" id="product-category-select" required></select>
+              </label>
+              <label>
+                Brand
+                <input type="text" name="brand" required />
+              </label>
+              <label>
+                Regular price
+                <input type="number" min="0" step="0.01" name="price" required />
+              </label>
+              <label>
+                Sale price
+                <input type="number" min="0" step="0.01" name="salePrice" />
+              </label>
+              <label>
+                Status
+                <select name="status">
+                  <option value="Draft">Draft</option>
+                  <option value="Ready to Publish">Ready to Publish</option>
+                  <option value="Published">Published</option>
+                </select>
+              </label>
+              <label>
+                Image URL
+                <input type="text" name="imageUrl" placeholder="https://example.com/product.jpg" />
+              </label>
+              <label class="full-width">
+                Description
+                <textarea rows="4" name="description" required></textarea>
+              </label>
+              <label class="full-width">
+                Additional attributes (JSON format)
+                <textarea rows="3" name="attributesJson" placeholder='{ "color": "Black", "size": "M" }'></textarea>
+              </label>
+            </div>
+          </div>
+          <div class="modal-actions modal-footer">
+            <button type="button" class="secondary-btn" data-close-modal="true">Cancel</button>
+            <button type="submit" class="primary-btn">Save Product</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script type="module" src="./js/app.js"></script>
+  </body>
+</html>

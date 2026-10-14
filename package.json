@@ -1,0 +1,23 @@
+{
+  "name": "smartpim",
+  "version": "1.0.0",
+  "description": "SmartPIM — AI-Powered Product Information Management System",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node server/server.js",
+    "test": "node --test tests/*.test.cjs"
+  },
+  "keywords": [
+    "pim",
+    "hackathon",
+    "ecommerce",
+    "dashboard"
+  ],
+  "author": "Shubh",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^18.0.7",
+    "express": "^4.21.2"
+  }
+}
